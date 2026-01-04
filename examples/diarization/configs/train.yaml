@@ -1,0 +1,93 @@
+exp_dir: experiments/audio_llm_dual_audio_tokens_anchor_num
+hydra:
+  run:
+    dir: ${exp_dir}/logs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+
+model:
+  model_type: audio-llm-dual-audio-tokens-anchor-num
+
+  audio_encoder:
+    model_type: zipformer
+    pretrained_model: /zipformer-encoder-zh-en # folder to loacl model
+    frozen: True
+
+  voice_encoder:
+    model_type: zipformer
+    pretrained_model: /speaker_encoder # folder to loacl model
+    frozen: True
+
+  llm:
+    model_type: qwen2
+    pretrained_model: /Qwen2.5-7B-Instruct # folder to loacl model
+    use_flash_attn: False
+    frozen: True
+
+  audio_token: <|AUDIO|>
+  tag_audio_boundary: False
+  pretrained_adapter: null
+  pretrained_semantic_adapter: null
+  pretrained_voice_adapter: null
+  max_length: 800 # in model structure
+
+  semantic_projector_ds_rate: 4
+  voice_projector_ds_rate: 4
+
+  semantic_anchor_interval: 8
+  voice_anchor_interval: 8
+  insert_anchors_at_ends: True
+  digit_embedding_path: utils/digit_token_embeddings.pt
+
+  exclude_from_checkpoint:
+    - audio_encoder
+    - voice_encoder
+    - llm
+
+trainer:
+  optimizer:
+    type: "adam"
+    lr: 0.001
+  scheduler:
+    type: "eden"
+    lr_epochs: 3.5
+    lr_batches: 7500
+    warmup_batches: 500
+    lr_steps_per_epoch: 0
+  num_epochs: 30
+  start_epoch: 1
+  num_steps: 100000
+  start_batch: 0
+  keep_last_k: 100
+  use_averaged_model: True
+  log_interval: 50
+  average_period: 200
+  reset_interval: 200
+  valid_interval: 500
+  save_every_n: 4
+  use_fp16: True
+  tensorboard: True
+
+data:
+  train_data_config: configs/AMI/data_configs/train_data_config.yaml
+  valid_data_config: configs/AMI/data_configs/valid_data_config.yaml
+  on_the_fly_feats: True
+  feature: fbank
+  sampling_rate: 16000
+  use_infinite_dataset: True
+  data_augmentation:
+    enable_spec_aug: True
+    enable_musan: False
+    musan: 
+    enable_speed_perturb: False
+  sampler:
+    type: bucketing_sampler
+    num_buckets: 30
+    max_duration: 80
+    shuffle: True
+    drop_last: True
+  text_normalization: True
+  pad_to_30s: False
+  num_workers: 1
+
+prompt_file: configs/prompt.yaml
+
+

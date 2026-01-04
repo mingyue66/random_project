@@ -1,0 +1,28 @@
+exp_dir:
+checkpoint:
+  # [Checkpoint Loading Priority]
+  # 1. If 'filename' is provided, load directly from: {exp_dir}/{filename}
+  # 2. Else if 'iter' > 0, load from: {exp_dir}/averaged_iter{iter}_avg{avg}.pt if exists else do model averaging from checkpoint-xxx.pt
+  # 3. Else if 'epoch' > 0, load from: {exp_dir}/averaged_epoch{epoch}_avg{avg}.pt if exists else do model averaging from epoch-xxx.pt
+  filename:                 # e.g., "averaged-iter-25000-avg-0.pt"
+  iter: 0                   # e.g., 25000
+  epoch: 0                  # e.g., 30
+  avg: 0                    # how many checkpoints to average
+
+decoding_method: greedy_search
+
+prompt_file: configs/prompt.yaml
+
+data:
+  test_data_config: configs/AMI/data_configs/test_data_config.yaml
+  max_duration: 1000 # single A100=1000, single H200=3000
+  num_workers: 1
+  sampling_rate: 16000
+
+# Decode-time options
+decode:
+  compute_accuracy: false     # calculte token-level acc
+  min_duration: 0.5 # filter too short cuts
+  max_duration: 80 # filter too long cuts
+  max_supervisions_per_cut: 9999
+

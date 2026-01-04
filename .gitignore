@@ -1,0 +1,42 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyc
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.tox/
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
+.ipynb_checkpoints/
+
+# Virtual envs
+.env
+.venv/
+venv/
+
+# Build/dist
+build/
+dist/
+*.egg-info/
+
+# Logs and runs
+logs/
+outputs/
+**/.hydra/
+tensorboard/
+wandb/
+mlruns/
+*.log
+
+# Large model artifacts
+*.pt
+*.ckpt
+
+# Example runtime outputs
+examples/**/exp/
+examples/**/outputs/

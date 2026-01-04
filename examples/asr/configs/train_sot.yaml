@@ -1,0 +1,102 @@
+# SOT (Serialized Output Training) ASR Training Configuration
+# 
+# This config extends the standard ASR training config to support SOT training,
+# where the model learns to predict speaker change tokens (<sc>) along with text.
+#
+# Key differences from standard ASR training:
+# - sot_training: true (enables <sc> token handling)
+# - model.pretrained_model: path to pretrained ASR model (optional, for finetuning)
+# - Data is expected to contain <sc> markers in the reference text
+#
+# Usage:
+#   torchrun --nproc_per_node=8 examples/asr/train_sot.py --config-name train_sot
+
+exp_dir: exp/asr_sot
+hydra:
+  run:
+    dir: ${exp_dir}/logs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+
+# SOT-specific settings
+sot_training: true  # Enable SOT training (adds <sc> token to vocabulary)
+
+# Tokenizer path
+tokenizer: your_path_to_tokenizer_dir
+
+model:
+  model_type: asr  # Required
+  
+  # OPTION 1: Load pretrained ASR model and finetune with SOT
+  # The vocab will be automatically expanded to include <sc> token
+  pretrained_model: null  # Set to path/to/pretrained_asr_model for finetuning
+  
+  # OPTION 2: Train from scratch (if pretrained_model is null)
+  encoder: 
+    model_type: zipformer
+    pretrained_encoder: null  # Optional: path to pretrained encoder weights
+
+trainer:
+  optimizer: 
+    type: "scaled_adam"
+    lr: 0.045  # You may want to use a smaller lr (e.g., 0.01) when finetuning
+  
+  scheduler: 
+    type: "eden"
+    lr_epochs: 3.5
+    lr_batches: 7500
+    warmup_batches: 500
+    lr_steps_per_epoch: 0
+  
+  num_epochs: 30
+  start_epoch: 1
+  num_steps: 3000000
+  start_batch: 0
+  keep_last_k: 30
+  use_averaged_model: true
+  log_interval: 50
+  average_period: 200
+  reset_interval: 200
+  valid_interval: 100
+  save_every_n: 1
+  use_fp16: true
+  tensorboard: true
+
+  # RNN-T loss settings
+  prune_range: 5
+  lm_scale: 0.25
+  am_scale: 0
+  simple_loss_scale: 0.5
+  rnnt_warm_step: 2000
+  ctc_loss_scale: 0.2  # Optional: add CTC auxiliary loss
+
+data:
+  # Data configs should point to manifests with <sc> markers in the text
+  train_data_config: configs/data_configs/train_data_config.yaml
+  valid_data_config: configs/data_configs/valid_data_config.yaml
+  
+  on_the_fly_feats: true
+  sampling_rate: 16000
+  num_workers: 8
+  pad_to_30s: false
+  use_infinite_dataset: true
+  
+  # Data augmentation (you may want to disable for SOT finetuning)
+  data_augmentation:
+    enable_spec_aug: true
+    enable_musan: false
+    musan: your_path_to_musan_cuts.jsonl.gz
+    enable_speed_perturb: false
+  
+  sampler:
+    type: bucketing_sampler
+    num_buckets: 30
+    max_duration: 600
+    shuffle: true
+    drop_last: true
+  
+  # Text normalization: be careful with this for SOT training
+  # You need to ensure <sc> tokens are NOT removed by normalization
+  text_normalization: true
+
+# Seed for reproducibility
+seed: 42
+

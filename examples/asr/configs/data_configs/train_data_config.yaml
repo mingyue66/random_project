@@ -1,0 +1,12 @@
+# Example training data config list.
+# Schema: list of dataset specs with fields:
+# - manifest (str): absolute path to a Lhotse CutSet jsonl.gz
+# - hours (float): approximate dataset hours, used for weighting
+# - weights (int, optional): repetition multiplier (default 1)
+# - lang (str, optional): language label (default "zh")
+
+- hours: 100
+  manifest: /AMI_manifests/ami-sdm_train_multiASR_sot.jsonl.gz
+  weights: 1
+  lang: zh
+
