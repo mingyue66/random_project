@@ -10,7 +10,7 @@ This project implements a fully end-to-end multi-speaker ASR and diarization fra
 <video src="examples/diarization/assets/demo.mp4" controls="controls" style="max-width: 100%;">
 </video>
 
-If Demo is not displayed automatically, download it here: [Watch the demo](examples/diarization/assets/demo.mp4) (669 KB)
+If Demo is not displayed automatically, download the anonymized file from "examples/diarization/assets/demo.mp4" (669 KB)
 
 The model takes raw waveform of multi-speaker conversation and directly outputs a structured output containing timestamps, speaker labels, gender, and speaker-attributed ASR transcription.
 
