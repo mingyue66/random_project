@@ -10,7 +10,7 @@ This project implements a fully end-to-end multi-speaker ASR and diarization fra
 <video src="examples/diarization/assets/demo.mp4" controls="controls" style="max-width: 100%;">
 </video>
 
-If Demo (about 46s) is not displayed automatically, view it here: [Watch the demo](examples/diarization/assets/demo.mp4)
+If Demo is not displayed automatically, download the anonymized file from "examples/diarization/assets/demo.mp4" (669 KB)
 
 The model takes raw waveform of multi-speaker conversation and directly outputs a structured output containing timestamps, speaker labels, gender, and speaker-attributed ASR transcription.
 
@@ -216,48 +216,3 @@ During training and inference, each example is converted into an XML-like repres
 <spk id="2" g="f" t="0.96-2.13"/>
 </speaker>
 ```
-
-
-## Project Structure
-
-```
-.
-├── src/framework/              # Core framework code
-│   ├── models/                 # Model implementations
-│   ├── data/                   # Data loading utilities
-│   ├── trainer/                # Training infrastructure
-│   └── utils/                  # Utility functions
-├── examples/
-│   ├── diarization/           # Multi-speaker diarization example
-│   │   ├── train.py           # Training script
-│   │   ├── decode.py          # Decoding script
-│   │   ├── evaluate.py        # Evaluation script
-│   │   ├── configs/           # Configuration files
-│   │   └── scripts/           # Shell scripts
-│   └── asr/                   # ASR with SOT training example
-│       ├── train_sot.py       # SOT training script
-│       └── README_SOT.md      # SOT documentation
-└── requirements.txt           # Python dependencies
-```
-
-
-## Additional Examples
-
-### Serialized Output Training (SOT) for ASR
-
-For details on training ASR models with speaker change token prediction, see [examples/asr/README_SOT.md](examples/asr/README_SOT.md).
-
-
-## License
-
-Please refer to third-party copyright notices preserved in the source files for components adapted from other projects (Xiaomi/Icefall, Facebook/Fairseq, ESPnet, etc.).
-
-
-## Acknowledgments
-
-This work builds upon several open-source projects:
-- [Lhotse](https://github.com/lhotse-speech/lhotse) for data preparation
-- [k2-fsa/icefall](https://github.com/k2-fsa/icefall) for model components
-- [ESPnet](https://github.com/espnet/espnet) for transformer modules
-- [Qwen](https://huggingface.co/Qwen) for the LLM backbone
-
